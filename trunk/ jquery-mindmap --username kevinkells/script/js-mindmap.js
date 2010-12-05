@@ -441,20 +441,9 @@
                 var myul = $("#js-mindmap-src ul").get(0);
                 addList(this, myul, nodes[nodeno]);
 				
-
-
-                // Flatten LIs
-                $('li', myul).each(function(index) {
-                    // Move each LI to the root of the UL
-                    // We do this because of the cascading positioning of LIs
-                    // If I put an LI at (10, 10), all child UL>LIs will also be offset
-                    // so we move everything into the root UL
-                    $(myul).append(this);
-                });
-
                 // Add additional lines described by rel="id id id"
                 var obj = this;
-                $('li>a[rel]',myul).each(function() {
+                $('#js-mindmap li>a[rel]').each(function() {
                     var rel = $(this).attr('rel');
                     var currentNode = $(this).parent()[0].mindmapNode;
                     $.each(rel.split(' '), function(index) {
