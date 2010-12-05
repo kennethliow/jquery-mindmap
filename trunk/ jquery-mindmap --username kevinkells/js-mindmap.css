@@ -47,3 +47,14 @@
     .ui-draggable {
         position:absolute;
     }
+	.js-mindmap-active .node .node-action {
+	  position:absolute;
+	  right:-2em;
+	  bottom:-1px;
+	  text-align:center;
+	  vertical-align:super;
+	}
+	/* Until the root Mindmap element is changed from <a> to the same 
+	   thing as all the other Mindmap nodes, do this just to keep the 
+	   Mindmap Node action area from getting underlined. Hack alert.*/
+	.js-mindmap-active a { text-decoration:none; }
