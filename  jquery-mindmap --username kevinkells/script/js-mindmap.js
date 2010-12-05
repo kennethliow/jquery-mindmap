@@ -332,6 +332,9 @@
             var nodes = obj.nodes;
             var lines = obj.lines;
             
+			// Move new LI node into the main UL used for Mindmap Node navigation
+			$("#js-mindmap").append(ul);
+
             // For each LI in this list
             $('>li', ul).each(function(index) {
 
@@ -357,6 +360,7 @@
                     lines[lineno] = new Line(obj, lineno, nodes[nodeno], parent);
                 }
             });
+
         }
     
         // This Helper adds an LI DOM node into the Mindmap and also into the right
@@ -390,7 +394,7 @@
 			}
 			
 			// Move new LI node into the main UL used for Mindmap Node navigation
-			$("ul#navigation").append(newNodeLI);
+			$("#js-mindmap").append(newNodeLI);
         }
 
         
@@ -423,16 +427,21 @@
                 
                 //NODES
                 // create root node
-                var myroot = $("a", this).get(0);
+                var myroot = $("#js-mindmap-src a").get(0);
                 var nodeno = nodes.length;
 				// Add Mindmap Node action mechanism to root Mindmap node
 				if (options.addActionArea) 
 					$(myroot).append("<span class=node-action>[+]</span>");
                 nodes[nodeno] = new Node(this, nodeno, myroot, null, true);
-    
+
+				// Move new LI node into the main UL used for Mindmap Node navigation
+				$("#js-mindmap").append(myroot);
+
                 // build the tree
-                var myul = $("ul", this).get(0);
+                var myul = $("#js-mindmap-src ul").get(0);
                 addList(this, myul, nodes[nodeno]);
+				
+
 
                 // Flatten LIs
                 $('li', myul).each(function(index) {
