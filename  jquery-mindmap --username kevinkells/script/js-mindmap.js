@@ -34,7 +34,8 @@
             maxForce: 0.1,
             showSublines: true,
             updateIterationCount: 20,
-            showProgressive: true
+            showProgressive: true,
+			addActionArea: true
         },options);
     
         // Define all Node related functions.
@@ -67,6 +68,12 @@
             }
     
             var thisnode = this;
+			
+			// Set up event handler if the Mindmap Node action is clicked
+			$(">.node-action", this.el).click(function(){
+				thisnode.insertMindmapNode(); return false;
+			});
+
             this.el.click(function(){
  //               console.log(obj.activeNode);
                 if (obj.activeNode) obj.activeNode.el.removeClass('active');
@@ -81,6 +88,17 @@
             });
         }
     
+		// Public member function which adds a new Mindmap Node as a child of
+		// the this node.
+		// Current asks for text via "prompt" mechanism, can be improved.
+        Node.prototype.insertMindmapNode = function(){
+			var newtext = prompt("Please enter text of new node");
+			var newNodeLI = $("<li>"+newtext+"</li>");
+			insertMindmapNode(this.obj, newNodeLI, this);
+
+			return false;
+        }
+	
         //TODO: Write this method!
         Node.prototype.layOutChildren = function(){
         //show my child nodes in an equally spaced group around myself, instead of placing them randomly
@@ -338,6 +356,11 @@
 
                 // Add as a new Node
                 var nodeno = nodes.length;
+				
+				// Add Mindmap Node action mechanism
+				if (options.addActionArea)
+					$(this).append("<div class=node-action>[+]</div>");
+
                 nodes[nodeno] = new Node(obj, nodeno, this, parent);
 //                console.log(this);
                 this.mindmapNode = nodes[nodeno];
@@ -355,6 +378,40 @@
             });
         }
     
+        // This Helper adds an LI DOM node into the Mindmap and also into the right
+		// place in the DOM.
+        function insertMindmapNode(obj, newNodeLI, parent){
+            var nodes = obj.nodes;
+            var lines = obj.lines;
+            
+			// Add Mindmap Node action mechanism
+			if (options.addActionArea)
+				$(newNodeLI).append("<div class=node-action>[+]</div>");
+
+			// Add as a new Node
+			var nodeno = nodes.length;
+			
+			// Create new Mindmap Node and append to the list of Mindmap nodes
+			nodes[nodeno] = new Node(obj, nodeno, newNodeLI, parent);
+			this.mindmapNode = nodes[nodeno];
+			
+			/* We'll leave this out for now. May be useful with some more development
+			// Add subtrees
+			$('>ul', this).each(function(index) {
+				addList(obj, this, nodes[nodeno]);
+			});
+			*/
+			
+			// Add Relationship between Nodes (draw a line)
+			if (parent != null) {
+				var lineno = lines.length;
+				lines[lineno] = new Line(obj, lineno, nodes[nodeno], parent);
+			}
+			
+			// Move new LI node into the main UL used for Mindmap Node navigation
+			$("ul#navigation").append(newNodeLI);
+        }
+
         
         return this.each(function() {
 
@@ -387,6 +444,9 @@
                 // create root node
                 var myroot = $("a", this).get(0);
                 var nodeno = nodes.length;
+				// Add Mindmap Node action mechanism to root Mindmap node
+				if (options.addActionArea) 
+					$(myroot).append("<span class=node-action>[+]</span>");
                 nodes[nodeno] = new Node(this, nodeno, myroot, null, true);
     
                 // build the tree
