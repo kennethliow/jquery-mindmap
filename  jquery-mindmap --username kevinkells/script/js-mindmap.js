@@ -362,7 +362,33 @@
             });
 
         }
-    
+ 
+         // This Helper adds the UL into the mindmap
+        function insertMindmapNode(topDOMobj, nodeLI, MindmapParentNode){
+            var nodes = obj.nodes;
+            var lines = obj.lines;
+
+            var nodeno = nodes.length;
+							//        function MindmapNode(topDOMobj, index, DOMelement, MindmapParentNode){
+            nodes[nodeno] = new Node(obj, nodeno, nodeLI, MindmapParentNode);
+			
+            // For each LI in this list
+			if (MindmapParentNode != null) {
+				var lineno = lines.length;
+				lines[lineno] = new Line(obj, lineno, nodes[nodeno], MindmapParentNode);
+			}
+			
+			var thisparent = nodes[nodeno];
+			// Add subtrees recursively
+			$('>li', $("ul",nodeLI)).each(function(index, _node) {
+					//function MindmapNode(topDOMobj, index, DOMelement, MindmapParentNode){
+				insertMindmapNode(obj, _node, nodes[nodeno]);
+			});
+			
+			$("#js-mindmap").append(nodeLI);
+        }
+
+ 
         // This Helper adds an LI DOM node into the Mindmap and also into the right
 		// place in the DOM.
         function insertMindmapNode(obj, newNodeLI, parent){
