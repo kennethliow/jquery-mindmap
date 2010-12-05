@@ -119,21 +119,14 @@
                 var y1 = (nodes[i].y - this.y);
                 //adjust for variable node size
     //		var nodewidths = (($(nodes[i]).width() + $(this.el).width())/2);
-                var xsign = x1 / Math.abs(x1);
-                var ysign = y1 / Math.abs(y1);
                 var dist = Math.sqrt((x1 * x1) + (y1 * y1));
-                var theta = Math.atan(y1 / x1);
-                if (x1 == 0) {
-                    theta = Math.PI / 2;
-                    xsign = 0;
-                }
                 // force is based on radial distance
                 var myrepulse = options.repulse;
                 if (this.parent==nodes[i]) myrepulse=myrepulse*10;  //parents stand further away
                 var f = (myrepulse * 500) / (dist * dist);
                 if (Math.abs(dist) < 500) {
-                    fx += -f * Math.cos(theta) * xsign;
-                    fy += -f * Math.sin(theta) * xsign;
+                    fx += -f * x1 / dist;
+                    fy += -f * y1 / dist;
                 }
             }
             // add repulsive force of the "walls"
@@ -165,17 +158,11 @@
                 var x1 = (otherend.x - this.x);
                 var y1 = (otherend.y - this.y);
                 var dist = Math.sqrt((x1 * x1) + (y1 * y1));
-                var xsign = x1 / Math.abs(x1);
-                var theta = Math.atan(y1 / x1);
-                if (x1==0) {
-                    theta = Math.PI / 2;
-                    xsign = 0;
-                }
                 // force is based on radial distance
                 var f = (options.attract * dist) / 10000;
                 if (Math.abs(dist) > 0) {
-                    fx += f * Math.cos(theta) * xsign;
-                    fy += f * Math.sin(theta) * xsign;
+                    fx += f * x1 / dist;
+                    fy += f * y1 / dist;
                 }
             }
     
@@ -186,17 +173,11 @@
                 var x1 = ((otherend.x / 2) - 100 - this.x);
                 var y1 = ((otherend.y / 2) - this.y);
                 var dist = Math.sqrt((x1 * x1) + (y1 * y1));
-                var xsign = x1 / Math.abs(x1);
-                var theta = Math.atan(y1 / x1);
-                if (x1 == 0) {
-                    theta = Math.PI / 2;
-                    xsign = 0;
-                }
                 // force is based on radial distance
                 var f = (0.1 * options.attract*dist) / 10000;
                 if (Math.abs(dist) > 0) {
-                    fx += f * Math.cos(theta) * xsign;
-                    fy += f * Math.sin(theta) * xsign;
+                    fx += f * x1 / dist;
+                    fy += f * y1 / dist;
                 }
             }
     
