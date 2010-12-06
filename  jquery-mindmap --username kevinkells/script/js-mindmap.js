@@ -334,13 +334,15 @@
             var lines = obj.lines;
 
             var nodeno = nodes.length;
+			
+			// Add Mindmap Node action mechanism
+			if (options.addActionArea)
+				$(nodeLI).append("<div class=node-action>[+]</div>");
+
 			// function MindmapNode(topDOMobj, index, DOMelement, MindmapParentNode){
             nodes[nodeno] = new Node(obj, nodeno, nodeLI, MindmapParentNode);
             nodeLI.mindmapNode = nodes[nodeno];
 
-			// Add Mindmap Node action mechanism
-			if (options.addActionArea)
-				$(nodeLI).append("<div class=node-action>[+]</div>");
 
 			var thisnode = nodes[nodeno];
 			
