@@ -43,10 +43,6 @@
             this.obj = obj;
         	this.el = $(el);
         	this.el.mindMapObj = this;
-            if (active) {
-                obj.activeNode = this;
-                $(this.el).addClass('active');
-            }
             this.parent = parent;
             this.el.addClass('node');
             this.index = index;
@@ -54,6 +50,10 @@
             this.hasLayout = true;
             this.x = Math.random()+(options.mapArea.x/2);
             this.y = Math.random()+(options.mapArea.y/2);
+			if (parent===null) {
+                obj.activeNode = this;
+                $(this.el).addClass('active');
+            }
         	this.el.css('left', this.x + "px");
         	this.el.css('top', this.y + "px");
             this.dx = 0;
@@ -327,102 +327,37 @@
             
         }
     
-        // This Helper adds the UL into the mindmap
-        function addList(obj, ul, parent){
-            var nodes = obj.nodes;
-            var lines = obj.lines;
-            
-			// Move new LI node into the main UL used for Mindmap Node navigation
-			$("#js-mindmap").append(ul);
-
-            // For each LI in this list
-            $('>li', ul).each(function(index) {
-
-                // Add as a new Node
-                var nodeno = nodes.length;
-				
-				// Add Mindmap Node action mechanism
-				if (options.addActionArea)
-					$(this).append("<div class=node-action>[+]</div>");
-
-                nodes[nodeno] = new Node(obj, nodeno, this, parent);
-//                console.log(this);
-                this.mindmapNode = nodes[nodeno];
-                
-                // Add subtrees
-                $('>ul', this).each(function(index) {
-                    addList(obj, this, nodes[nodeno]);
-                });
-                
-                // Add Relationship between Nodes (draw a line)
-                if (parent != null) {
-                    var lineno = lines.length;
-                    lines[lineno] = new Line(obj, lineno, nodes[nodeno], parent);
-                }
-            });
-
-        }
  
          // This Helper adds the UL into the mindmap
-        function insertMindmapNode(topDOMobj, nodeLI, MindmapParentNode){
+        function insertMindmapNode(obj, nodeLI, MindmapParentNode){
             var nodes = obj.nodes;
             var lines = obj.lines;
 
             var nodeno = nodes.length;
-							//        function MindmapNode(topDOMobj, index, DOMelement, MindmapParentNode){
+			// function MindmapNode(topDOMobj, index, DOMelement, MindmapParentNode){
             nodes[nodeno] = new Node(obj, nodeno, nodeLI, MindmapParentNode);
+            nodeLI.mindmapNode = nodes[nodeno];
+
+			// Add Mindmap Node action mechanism
+			if (options.addActionArea)
+				$(nodeLI).append("<div class=node-action>[+]</div>");
+
+			var thisnode = nodes[nodeno];
 			
             // For each LI in this list
 			if (MindmapParentNode != null) {
 				var lineno = lines.length;
-				lines[lineno] = new Line(obj, lineno, nodes[nodeno], MindmapParentNode);
+				lines[lineno] = new Line(obj, lineno, thisnode, MindmapParentNode);
 			}
-			
-			var thisparent = nodes[nodeno];
+
 			// Add subtrees recursively
-			$('>li', $("ul",nodeLI)).each(function(index, _node) {
-					//function MindmapNode(topDOMobj, index, DOMelement, MindmapParentNode){
-				insertMindmapNode(obj, _node, nodes[nodeno]);
+			$('>li', $(">ul",nodeLI)).each(function(index, _node) {
+				insertMindmapNode(obj, _node, thisnode);
 			});
-			
+		
 			$("#js-mindmap").append(nodeLI);
-        }
 
- 
-        // This Helper adds an LI DOM node into the Mindmap and also into the right
-		// place in the DOM.
-        function insertMindmapNode(obj, newNodeLI, parent){
-            var nodes = obj.nodes;
-            var lines = obj.lines;
-            
-			// Add Mindmap Node action mechanism
-			if (options.addActionArea)
-				$(newNodeLI).append("<div class=node-action>[+]</div>");
-
-			// Add as a new Node
-			var nodeno = nodes.length;
-			
-			// Create new Mindmap Node and append to the list of Mindmap nodes
-			nodes[nodeno] = new Node(obj, nodeno, newNodeLI, parent);
-			this.mindmapNode = nodes[nodeno];
-			
-			/* We'll leave this out for now. May be useful with some more development
-			// Add subtrees
-			$('>ul', this).each(function(index) {
-				addList(obj, this, nodes[nodeno]);
-			});
-			*/
-			
-			// Add Relationship between Nodes (draw a line)
-			if (parent != null) {
-				var lineno = lines.length;
-				lines[lineno] = new Line(obj, lineno, nodes[nodeno], parent);
-			}
-			
-			// Move new LI node into the main UL used for Mindmap Node navigation
-			$("#js-mindmap").append(newNodeLI);
-        }
-
+	}
         
         return this.each(function() {
 
@@ -453,28 +388,17 @@
                 
                 //NODES
                 // create root node
-                var myroot = $("#js-mindmap-src a").get(0);
-                var nodeno = nodes.length;
-				// Add Mindmap Node action mechanism to root Mindmap node
-				if (options.addActionArea) 
-					$(myroot).append("<span class=node-action>[+]</span>");
-                nodes[nodeno] = new Node(this, nodeno, myroot, null, true);
+                var rootLI = $("#js-mindmap-src li").get(0);
+				insertMindmapNode(this, rootLI, null);
 
-				// Move new LI node into the main UL used for Mindmap Node navigation
-				$("#js-mindmap").append(myroot);
-
-                // build the tree
-                var myul = $("#js-mindmap-src ul").get(0);
-                addList(this, myul, nodes[nodeno]);
-				
                 // Add additional lines described by rel="id id id"
                 var obj = this;
-                $('#js-mindmap li>a[rel]').each(function() {
+                $('#js-mindmap li[rel]').each(function() {
                     var rel = $(this).attr('rel');
-                    var currentNode = $(this).parent()[0].mindmapNode;
+                    var currentNode = $(this)[0].mindmapNode;
                     $.each(rel.split(' '), function(index) {
 //                        console.log(this);
-                        var parentNode = $('#'+this).parent()[0].mindmapNode;
+                        var parentNode = $('#'+this)[0].mindmapNode;
                         var lineno = lines.length;
                         lines[lineno] = new Line(obj, lineno, currentNode, parentNode);
                         
