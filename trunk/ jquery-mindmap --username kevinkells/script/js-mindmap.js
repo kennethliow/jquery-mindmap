@@ -86,6 +86,7 @@
                 /*obj.activeNode = thisnode;
 				setActiveBranch(obj.activeNode,false);*/
                 obj.activeNode.el.addClass('active');
+				obj.recalc_positions=true;
                 return false;
             });
     
@@ -113,9 +114,9 @@
 		// Current asks for text via "prompt" mechanism, can be improved.
         Node.prototype.insertMindmapNode = function(){
 			var newtext = prompt("Please enter text of new node. Note: Your input will not be stored (yet).");
+			if (!newtext) return;
 			var newNodeLI = $("<li>"+newtext+"</li>");
 			insertMindmapNode(this.obj, newNodeLI, this);
-
 			return false;
         }
 	
@@ -182,6 +183,9 @@
 						fy += -f * y1 / dist;
 					}
 				}
+				
+				/*
+				
 				// add repulsive force of the "walls"
 				//left wall
 				var xdist = this.x + $(this.el).width();
@@ -198,7 +202,8 @@
 				var bottomdist = (options.mapArea.y - this.y);
 				var f = -(options.wallrepulse * 500) / (bottomdist * bottomdist);
 				fy += Math.max(-2, f);
-		
+				*/
+
 				// for each line, of which I'm a part, add an attractive force.
 				for (var i = 0; i < lines.length; i++) {
 					var otherend = null;
@@ -265,27 +270,34 @@
             if (Math.abs(this.dx) < options.minSpeed) this.dx = 0;
             if (Math.abs(this.dy) < options.minSpeed) this.dy = 0;
 			
-			if (this.dx ==0 && this.dy ==0) {
-			  return;
-			}
-			
-			this.obj.recalc_positions = true;
-			
+			var startx = this.x;
+			var starty = this.y;
+
             //apply velocity vector
             this.x += this.dx * options.timeperiod;
             this.y += this.dy * options.timeperiod;
-            this.x = Math.min(options.mapArea.x,Math.max(1,this.x));
-            this.y = Math.min(options.mapArea.y,Math.max(1,this.y));
+			
+			var half_width = $(this.el).width() / 2;
+			var half_height = $(this.el).height() / 2;
+			
+            //this.x = Math.max(1,this.x/* - half_width*/);
+            //this.y = Math.max(1,this.y/* - half_height*/);
+            //this.x = Math.min(options.mapArea.x,this.x/* + half_width*/);
+            //this.y = Math.min(options.mapArea.y,this.y/* + half_height*/);
             //only update the display after the thousanth iteration, so it's not too wild at the start
-            this.count++;
+            //this.count++;
             //			if (this.count<updateDisplayAfterNthIteration) return;
             // display
-        	var showx = this.x - ($(this.el).width() / 2);
-        	var showy = this.y - ($(this.el).height() / 2);
+        	var showx = this.x - half_width;
+        	var showy = this.y - half_height;
         	this.el.css('left', showx + "px");
         	this.el.css('top', showy + "px");
         	this.el.css('opacity', this.opacity);
         	this.el.css('z-index', this.opacity * 100);
+			
+			if (startx != this.x || starty != this.y)
+				this.obj.recalc_positions = true;
+
 
         }
     
@@ -446,6 +458,7 @@
 			});
 		
 			$("#js-mindmap").append(nodeLI);
+			obj.recalc_positions=true;
 
 	}
         
@@ -511,7 +524,7 @@
                     };
                 })(this);
                 //setTimeout(loopCaller, 1);
-                setInterval(loopCaller, 1);
+                setInterval(loopCaller, 20);
     
                 // Finally add a class to the object, so that styles can be applied
                 $(this).addClass('js-mindmap-active');
