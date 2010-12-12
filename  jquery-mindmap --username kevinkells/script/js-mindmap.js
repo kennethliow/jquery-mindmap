@@ -112,7 +112,7 @@
 		// the this node.
 		// Current asks for text via "prompt" mechanism, can be improved.
         Node.prototype.insertMindmapNode = function(){
-			var newtext = prompt("Please enter text of new node");
+			var newtext = prompt("Please enter text of new node. Note: Your input will not be stored (yet).");
 			var newNodeLI = $("<li>"+newtext+"</li>");
 			insertMindmapNode(this.obj, newNodeLI, this);
 
@@ -163,6 +163,7 @@
 				for (var i = 0; i < nodes.length; i++) {
 					if (i == this.index) continue;
 					if ((options.showSublines && !nodes[i].hasLayout) || (!options.showSublines && !nodes[i].visible)) continue;
+					if (this.visible && !nodes[i].visible) continue;
 					// only force this node if it is a direct sibling, parent of active, 
 					if (nodes[i].parent != this && this.parent != nodes[i] && (!nodes[i].parent || nodes[i].parent.parent != this ) && this.level != nodes[i].level) continue;
 					// Repulsive force (coulomb's law)
@@ -175,7 +176,7 @@
 					var myrepulse = options.repulse;
 					if (this.parent && this.parent==nodes[i]) myrepulse=myrepulse*5;  //parents stand further away
 					if (this==this.obj.activeNode.parent) myrepulse=myrepulse*5;  //parents of active stand further away
-					var f = (myrepulse * 500) / (dist * dist);
+					var f = (myrepulse * 700) / (dist * dist);
 					if (Math.abs(dist) < 500) {
 						fx += -f * x1 / dist;
 						fy += -f * y1 / dist;
@@ -244,9 +245,9 @@
         		this.y = parseInt(this.el.css('top')) + ($(this.el).height() / 2);
         		this.dx = 0;
         		this.dy = 0;
+				this.obj.recalc_positions = true;
         		return;
         	}
-            
             
             //apply accelerations
             var forces = this.getForceVector();
@@ -263,6 +264,13 @@
             //ADD MINIMUM SPEEDS
             if (Math.abs(this.dx) < options.minSpeed) this.dx = 0;
             if (Math.abs(this.dy) < options.minSpeed) this.dy = 0;
+			
+			if (this.dx ==0 && this.dy ==0) {
+			  return;
+			}
+			
+			this.obj.recalc_positions = true;
+			
             //apply velocity vector
             this.x += this.dx * options.timeperiod;
             this.y += this.dy * options.timeperiod;
@@ -326,7 +334,10 @@
     
         // Main Running Loop
         var Loop = function (obj){
-            var nodes = obj.nodes;
+            if (!obj.recalc_positions)
+			  return;
+
+			var nodes = obj.nodes;
             var lines = obj.lines;
             var canvas = $('canvas', obj).get(0);
             if (typeof G_vmlCanvasManager != 'undefined') canvas=G_vmlCanvasManager.initElement(canvas);
@@ -334,7 +345,10 @@
 
 
             obj.ctx.clearRect(0, 0, options.mapArea.x, options.mapArea.y);
+			
+
             //update node positions
+			obj.recalc_positions=false;
             for (var i = 0; i < nodes.length; i++) {
                 //TODO: replace this temporary idea
                 var childActive = false;
@@ -371,7 +385,7 @@
 				} else if (currentNode.parent == activeNode.parent){ // if this is a sibling of active
 					currentNode.visible = true;
 					currentNode.hasLayout = true;
-					currentNode.opacity = 0.5;
+					currentNode.opacity = 0.4;
 				} else if (currentNode.parent && currentNode.parent.parent == activeNode){ // if this is a grandchild
 					currentNode.visible = false;
 					currentNode.hasLayout = true;
@@ -481,8 +495,14 @@
                     });
                 });
 
-
+				$("li").draggable({
+				  start: function(e,ui){
+					  obj.recalc_positions=true;
+					}
+				 });
                 
+				obj.recalc_positions=true;
+				
                 //LOOP
                 // Run the update loop on this object
                 var loopCaller = (function(obj) {
