@@ -2,7 +2,7 @@
 <html>
 <head>
 	<!-- Kenneth Kufluk 2008/09 -->
-	<title>js-mindmap demo</title>
+	<title>Blog Comments via Mindmap | Initial unfinished implementation</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=7">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<link rel="stylesheet" type="text/css" href="js-mindmap.css" />
@@ -35,26 +35,62 @@
 	</style>
 </head>
 <body>
-	<h1>js-mindmap</h1>
-	<p>This is a demo of js-mindmap.  Sitemap items taken from www.digitas.com as an example.</p>
-
 	<ul id="js-mindmap"></ul>
 	<div id="js-mindmap-src">
-    	<li>
-            Using an interactive mind map for blog post comments
+    	<li><div><h1>Mindmap Blog Comments</h1>
+            <p>Using an interactive mind map for blog post comments instead of the currently ubiquitous linear method.</p></div>
             <ul> 
-                <li>Linear blog post comments don't represent input from people well</li> 
-                <li>Interactive means your map changes as people make changes to the map</li> 
-                <li>Needs to be fun and attractive, i.e., animated if possible</li>
-                <li>Permit representation of complex issues   
+                <li><div><h1>Mindmap vs. Linear</h1><p>Linear blog post comments don't represent input from people well</p></div>
                         <ul> 
+                                                        <li>Permit representation of complex issues</li> 
+
                             <li>Document all different angles to an argument</li> 
                             <li>Allow people to follow different threads along different lines</li> 
                             <li>Allow the editing and subsuming collections of arguments into new nodes</li>   
                          </ul> 
                    </li> 
-                <li>Implementation
-                	<ul><li>Can't be a resource hog</li></ul>
+
+                
+                
+                </li> 
+                <li>&copy; 2010 Dr. Kevin Kells
+                	<ul>
+                    	<li id=linkhere>Programming by Dr. Kevin Kells based on Kenneth Kufluk's js-mindmap</li>
+                        <li>Textual content by Dr. Kevin Kells</li>
+                    </ul>
+                </li> 
+                <li><div><h1>Interactive</h1><p>Interactive means your map changes as people make changes to the map</p></div> </li> 
+                <li><div><h1>Ultimate Crowdsourcing: Crowd<i>streaming</i></h1><p>Don't just rely on the crowd to provide content&mdash;rely
+                on the crowd to give you content and then to give structure and meaning to that content.</p></div> </li> 
+                <li><div><h1>Attractive</h1><p>Needs to be fun and attractive, i.e., animated if possible</p></div></li>
+                <li><div><h1>Useful</h1><p>Interactive mindmap blog comments are much more useful</p></div> 
+                        <ul> 
+                            <li><div><h1>No Spam</h1><p>Ok, it's not that there won't be spam, it's that your
+                            crowd will be able to classify it as such and thus get it out of the way.</p></div></li> 
+                            <li><div><h1>Temperature overlays</h1><p>A way of rating your agreement with the handling
+                            of a complex subject can be done on a node-by-node (or branch by branch) basis, creating
+                            a temperature map with shades of green (agree) and red (disagree) and white (neutral).
+                            Anybody can easily sign off in a complex way to a complex handling of a complex issue,
+                            because you can now both "agree" and "disagree" in a nuanced way.</p></div></li> 
+                            <li><div><h1>Handle once</h1><p>Instead of countless repetitions of the handling of the
+                            same socio-political issues over and over again in the public dialogue
+                            using linear communication, change the focus of communication
+                            for complex issues. One mind map will suffice to get all the viewpoints in, then it is "done" except
+                            for tweaks from new people and updates to real life changes.</p><p>Then what do you do with the
+                            map? You <b>use it to solve problems!</b></p></div></li>   
+                         </ul> 
+                   </li> 
+                <li><h1>Current Implementation</h1>
+                    <ul><li>Changes stored from session to session (not yet available)</li>
+                    <li>Edit node content and titles (not yet available)</li>
+                    <li>Change topology, i.e., group and ungroup nodes under the same parents (not yet available)</li>
+                    <li>Delete nodes (not yet available)</li>
+                    <li>Keep a history (not yet available)</li>
+                    <li>Edit while other are watching or view while other are editing (which includes editing while others are editing) (not yet available)</li>
+                    <li rel="linkhere">JQuery implementation based on <a href="http://kenneth.kufluk.com/blog/2008/10/javascript-mindmap/">Kenneth Kufluk</a>'s <a href="https://github.com/kennethkufluk/js-mindmap">js-mindmap</a></li>
+                    </ul>
+                    </li>
+                    </ul>
                     </li> 
             </ul>
 

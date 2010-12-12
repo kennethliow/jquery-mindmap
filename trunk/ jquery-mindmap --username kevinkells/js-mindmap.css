@@ -16,12 +16,12 @@
 		padding:15px;
 		border:1px solid #A1B1D0;
 		-webkit-border-radius:10px;
-		-moz-border-radius:3px;
+		-moz-border-radius:10px;
 		cursor:pointer;
 		cursor:hand;
 		z-index:100;
 		list-style:none;
-        width:150px;
+        width:200px;
 	}
 	.js-mindmap-active .node  a{
 		color:#003258;
@@ -29,8 +29,7 @@
 	.js-mindmap-active .node.active{
 		background:#EAEFF5;
 		color:#003258;
-		font-weight:bold;
-		z-index:1000;
+		z-index:100000;
 	}
 	.js-mindmap-active .node.active  a{
 		color:#003258;
@@ -53,4 +52,7 @@
 	  bottom:-1px;
 	  text-align:center;
 	  vertical-align:super;
+	}
+	.js-mindmap-active .node h1 {
+		font-size:120%;
 	}
