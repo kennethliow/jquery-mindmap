@@ -1,0 +1,1 @@
+This is a form of Kenneth Kufluk's js-mindmap project, forked from v.0.3
